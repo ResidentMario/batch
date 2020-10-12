@@ -14,7 +14,7 @@ ENV PATH=/root/anaconda/bin:$PATH
 # conda injects pip onto the path, but not pip3, so we create a symlink.
 RUN ln /root/anaconda/bin/pip /root/anaconda/bin/pip3
 RUN conda install -c conda-forge \
-    dask-ml nodejs jupyterlab
+    dask-ml nodejs jupyterlab scikit-learn
 RUN pip install dask_labextension
 RUN jupyter labextension install dask-labextension
 RUN jupyter serverextension enable dask_labextension

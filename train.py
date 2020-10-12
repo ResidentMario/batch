@@ -15,4 +15,4 @@ y = y[sort_order, :]
 clf = LogisticRegression()
 clf.fit(X, y.ravel())
 
-dump(clf, '/spell/wta-matches-model.joblib') 
+dump(clf, 'wta-matches-model.joblib')
