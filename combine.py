@@ -6,7 +6,7 @@ if __name__ == "__main__":
     cluster = LocalCluster()
     client = Client(cluster)
 
-    matches = da.from_npy_stack("data/")
+    matches = da.from_npy_stack("/spell/data/")
     matches = df.from_array(matches)
 
     # IMPORTANT: note that this repartition is optional, if you want a partitioned write

@@ -42,7 +42,7 @@ combine = client.runs.new(
     github_url="https://github.com/ResidentMario/spell-batch.git",
     docker_image="residentmario/dask-cpu-workspace:latest",
     attached_resources={
-        f"runs/{run.id}/predictions.npy": f"data/{run.id}.npy" for run in test
+        f"runs/{run.id}/predictions.npy": f"/spell/data/{run.id}.npy" for run in test
     },
     command="python combine.py"
 )
