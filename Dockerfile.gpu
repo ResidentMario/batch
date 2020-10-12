@@ -1,0 +1,22 @@
+# TODO: finish this
+FROM nvidia/cuda:10.1-base-ubuntu18.04
+WORKDIR /spell
+
+RUN apt-get update && \
+    apt-get install -y wget git && rm -rf /var/lib/apt/lists/*
+ENV CONDA_HOME=/root/anaconda/
+RUN wget \
+    https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh \
+    && mkdir /root/.conda \
+    && bash Miniconda3-py37_4.8.3-Linux-x86_64.sh -fbp $CONDA_HOME \
+    && rm -f Miniconda3-py37_4.8.3-Linux-x86_64.sh
+ENV PATH=/root/anaconda/bin:$PATH
+# NOTE: Spell runs will fail if pip3 is not avaiable at the command line.
+# conda injects pip onto the path, but not pip3, so we create a symlink.
+RUN ln /root/anaconda/bin/pip /root/anaconda/bin/pip3
+RUN conda install -c rapidsai -c nvidia -c conda-forge -c defaults \
+    cuml=0.15 cudf=0.15 python=3.7 cudatoolkit=10.1 dask-ml=1.7.0 \
+    nodejs=14.13.0 jupyterlab=2.2.80
+RUN pip install dask_labextension dask_cuda && \
+    jupyter labextension install dask-labextension && \
+    jupyter serverextension enable dask_labextension
