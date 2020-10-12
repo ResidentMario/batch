@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import argparse
 from joblib import load
@@ -7,11 +6,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--filename', type=str, dest='filename', help='path to the dataset to be scored')
 args = parser.parse_args()
 
-clf = load('/mnt/model/wta-matches-model.joblib')
+if __name__ == "__main__":
+    from distributed import Client, LocalCluster
+    from dask_ml.wrappers import ParallelPostFit
+    import dask.dataframe as dd
 
-matches = pd.read_csv(args.filename)
-point_diff = (matches.winner_rank_points - matches.loser_rank_points).dropna()
-X_test = point_diff.values[:, np.newaxis]
+    cluster = LocalCluster()
+    client = Client(cluster)
 
-y_test_pred = clf.predict(X_test)
-np.save('pred.npy', y_test_pred)
+    clf = load('wta-matches-model.joblib')
+    clf = ParallelPostFit(clf)
+
+    matches = dd.read_csv(args.filename, assume_missing=True)
+    point_diff = (matches.winner_rank_points - matches.loser_rank_points).dropna()
+    X_test = point_diff.compute().values[:, np.newaxis]
+
+    y_test_pred = clf.predict(X_test)
+    np.save("predictions.npz", y_test_pred)
