@@ -22,4 +22,4 @@ if __name__ == "__main__":
     X_test = point_diff.compute().values[:, np.newaxis]
 
     y_test_pred = clf.predict(X_test)
-    np.save("predictions.npz", y_test_pred)
+    np.save("predictions.npy", y_test_pred)

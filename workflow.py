@@ -37,4 +37,18 @@ for run in test:
     if run.status != client.runs.COMPLETE:
         raise OSError(f"Failed at scoring run {run.id}.")
 
+combine = client.runs.new(
+    machine_type="cpu",
+    github_url="https://github.com/ResidentMario/spell-batch.git",
+    docker_image="residentmario/dask-cpu-workspace:latest",
+    attached_resources={
+        f"runs/{run.id}/predictions.npy": f"data/{run.id}.npy" for run in test
+    },
+    command="python combine.py"
+)
+combine.wait_status(*client.runs.FINAL)
+combine.refresh()
+if combine.status != client.runs.COMPLETE:
+    raise OSError(f"Failed at combining run {combine.id}.")
+
 print("Finished workflow!")
