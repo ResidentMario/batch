@@ -3,6 +3,8 @@ client = spell.client.from_environment()
 
 train = client.runs.new(
     machine_type="cpu",
+    # IMPORTANT: point out that you can specify a branch as well.
+    github_url="https://github.com/ResidentMario/spell-batch.git",
     pip_packages=["pandas", "scikit-learn"],
     attached_resources={
         "s3://spell-datasets-share/wta-matches/": "/mnt/wta-matches/"
@@ -18,6 +20,7 @@ test = []
 for partition in range(2000, 2017):
     r = client.runs.new(
         machine_type="cpu",
+        github_url="https://github.com/ResidentMario/spell-batch.git",
         docker_image="residentmario/dask-cpu-workspace:latest",
         attached_resources={
             f"runs/{train.id}/wta-matches-model.joblib": "wta-matches-model.joblib",
